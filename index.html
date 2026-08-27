@@ -1,17 +1,14 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-CE4EJY0DNJ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-CE4EJY0DNJ');
-</script>
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CE4EJY0DNJ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-CE4EJY0DNJ');
+  </script>
 
   <meta name="google-site-verification" content="COVggTwRgl1Nm4IKSiExy9s9CI-mf7JfFWopYe_LjSY" />
 <meta charset="UTF-8">
@@ -1823,5 +1820,73 @@
     });
   });
 </script>
+
+
+<script>
+  /* ===== ANALYTICS: CLICS DE CONTACTO / CONVERSIÓN =====
+     Registra en Google Analytics 4 los clics principales de REVCAR:
+     - WhatsApp
+     - Teléfono
+     - Ubicación / Google Maps
+     - Botón "Cotiza Ahora"
+  */
+  (function(){
+    function ubicacionDelBoton(el){
+      if(el.closest('#productModal')) return 'modal_producto';
+      if(el.closest('.float-contact')) return 'contacto_flotante';
+      if(el.closest('.mobile-panel')) return 'menu_movil';
+      if(el.closest('header')) return 'cabecera';
+      if(el.closest('.hero')) return 'portada';
+      if(el.closest('#contacto')) return 'seccion_contacto';
+      if(el.closest('footer')) return 'pie_pagina';
+      return 'pagina';
+    }
+
+    function enviarEventoRevcar(nombre, el){
+      if(typeof window.gtag !== 'function') return;
+
+      const texto = (el.innerText || el.getAttribute('aria-label') || '').trim().replace(/\s+/g, ' ');
+      const href = el.getAttribute('href') || '';
+
+      gtag('event', nombre, {
+        ubicacion_boton: ubicacionDelBoton(el),
+        texto_boton: texto.substring(0, 100),
+        destino: href.substring(0, 200)
+      });
+    }
+
+    document.addEventListener('click', function(e){
+      const el = e.target.closest('a, button');
+      if(!el) return;
+
+      const href = (el.getAttribute('href') || '').toLowerCase();
+      const texto = (el.innerText || el.getAttribute('aria-label') || '').trim().toLowerCase();
+
+      // WhatsApp: incluye cabecera, móvil, portada, flotante, contacto, footer y modal de productos.
+      if(href.includes('wa.me/') || href.includes('whatsapp.com/')){
+        enviarEventoRevcar('click_whatsapp', el);
+        return;
+      }
+
+      // Llamada telefónica.
+      if(href.startsWith('tel:')){
+        enviarEventoRevcar('click_phone', el);
+        return;
+      }
+
+      // Google Maps / ubicación.
+      if(href.includes('maps.app.goo.gl') || href.includes('google.com/maps') || texto === 'ubicación'){
+        enviarEventoRevcar('click_location', el);
+        return;
+      }
+
+      // Botones "Cotiza Ahora" de escritorio y móvil.
+      if(el.classList.contains('btn-quote') && texto.includes('cotiza ahora')){
+        enviarEventoRevcar('click_cotiza_ahora', el);
+      }
+    });
+  })();
+</script>
+
 </body>
 </html>
